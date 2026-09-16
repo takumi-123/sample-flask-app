@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  # 1. webサーバー(Nginx)
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    depends_on: # 依存関係順番（dbからapp)
+      - app
+
+  # 2. アプリケーション(flask)
+  app:
+    build: ./app
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=mydatabase
+      - DB_USER=postgres
+      - DB_PASSWORD=secretpassword
+    depends_on:
+      - db
+
+  # 3. データベース(PostgreSQL)
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secretpassword
+    volumes: # 「データベースの中身が、コンテナの消滅とともに消えないように守るため」
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata: # PostgreSQLを安全に保管するため外側に出す
