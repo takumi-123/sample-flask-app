@@ -3,29 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ミニ掲示板</title>
+    <title>シンプル掲示板</title>
+    <!-- CSSの読み込み -->
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='style.css')}}"
+      href="{{ url_for('static', filename='style.css') }}"
     />
   </head>
   <body>
     <div class="container">
-      <h1>ミニ掲示板</h1>
+      <h1>💬 掲示板アプリ</h1>
 
-      <!-- メッセージを入力して送信するフォーム-->
-      <form method="POST">
-        <input type="text" name="message" placeholder="今何してる？" required />
-        <button type="submit">書き込む</button>
+      <!-- 投稿フォーム(POSTから送信されたら-->
+      <form action="/" method="POST" class="post-form">
+        <textarea
+          name="message"
+          placeholder="いまどうしてる？メッセージを入力..."
+          required
+        ></textarea>
+        <button type="submit">投稿する</button>
       </form>
 
-      <h3>投稿一覧</h3>
-      <ul>
-        <!--Pythonから渡された rows（投稿のリスト）をループでぐるぐる回して表示する -->
-        {% for row in rows%}
-        <li>{{ row[0] }}</li>
-        {% endfor %}
-      </ul>
+      <!-- 投稿一覧 -->
+      <div class="message-list">
+        <h2>投稿一覧</h2>
+        {% if rows %}
+        <ul>
+          {% for row in rows %}
+          <li class="message-card">{{ row[0] }}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p class="no-message">
+          まだ投稿はありません。最初のメッセージを投稿してみよう！
+        </p>
+        {% endif %}
+      </div>
     </div>
   </body>
 </html>
