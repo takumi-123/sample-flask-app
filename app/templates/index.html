@@ -30,7 +30,24 @@
         {% if rows %}
         <ul>
           {% for row in rows %}
-          <li class="message-card">{{ row[0] }}</li>
+          <li class="message-card">
+            <span>{{ row[1] }}</span>
+            <!-- 編集ボタン-->
+            <a
+              href="/edit/{{ row[0] }}"
+              class="edit-btn"
+              style="margin-right: 5px"
+              >編集</a
+            >
+            <!-- 削除ボタン（row[0] の id を使って削除ルートに飛ばす） -->
+            <form
+              action="/delete/{{ row[0] }}"
+              method="POST"
+              style="display: inline"
+            >
+              <button type="submit" class="delete-btn">削除</button>
+            </form>
+          </li>
           {% endfor %}
         </ul>
         {% else %}

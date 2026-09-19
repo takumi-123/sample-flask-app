@@ -119,3 +119,51 @@ h2 {
   font-style: italic;
   padding: 20px 0;
 }
+
+/* ログイン、登録用の追加スタイル*/
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: bold;
+  color: #34495e;
+  font-size: 14px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e1e8ed;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.2s ease;
+  background-color: #fafbfc;
+}
+
+/* 入力欄にフォーカスした時のエフェクト*/
+.form-group input:focus {
+  border-color: #3498db;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+}
+
+.auth-link {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.auth-link a {
+  color: #3498db;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.auth-link a:hover {
+  color: #2980b9;
+  text-decoration: underline;
+}
