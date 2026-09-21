@@ -167,3 +167,54 @@ h2 {
   color: #2980b9;
   text-decoration: underline;
 }
+
+/* ダークモードが有効になったときのスタイル */
+body.dark-mode {
+  background-color: #1a1a1a;
+  color: #f0f0f0;
+}
+
+/* ダークモード時のカードや入力欄の色調整（お好みで！） */
+body.dark-mode .message-card {
+  background-color: #2d2d2d;
+  color: #f0f0f0;
+  border-color: #444;
+}
+
+body.dark-mode textarea,
+body.dark-mode input {
+  background-color: #2d2d2d;
+  color: #f0f0f0;
+  border-color: #444;
+}
+
+/* 検索フォーム全体 */
+.search-form {
+  margin-bottom: 20px; /*外側の下調整*/
+}
+
+/*検索窓*/
+.search-input {
+  padding: 6px 10px; /* 中の上下6 左右10*/
+  border: 1px solid #ccc; /* 枠線(太さ、しゅるい、色*/
+  border-radius: 4px; /*要素の角を丸くする*/
+  font-size: 14px; /*文字の大きさ*/
+}
+
+/*検索ボタン*/
+.search-btn {
+  padding: 6px 12px;
+  background-color: #007bff; /*背景色*/
+  color: white; /*文字の色*/
+  border: none; /*枠線なし*/
+  border-radius: 4px; /*下線を消す*/
+  cursor: pointer; /*マウスあるとき*/
+}
+
+/* リセットリンク */
+.reset-btn {
+  margin-left: 10px; /* 外側左*/
+  text-decoration: none; /*?*/
+  color: #666; /*色*/
+  font-size: 14px; /*文字の大きさ*/
+}

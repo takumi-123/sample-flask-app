@@ -12,8 +12,20 @@
   </head>
   <body>
     <div class="container">
+      <button id="dark-mode-btn">🌙 ダークモード切替</button>
       <h1>💬 掲示板アプリ</h1>
 
+      <!-- 検索フォーム-->
+      <form action="/" method="GET" class="search-form">
+        <input
+          type="text"
+          name="keyword"
+          placeholder="キーワードで検索..."
+          class="search-input"
+        />
+        <button type="submit" class="search-btn">検索</button>
+        <a href="/" class="reset-btn">リセット</a>
+      </form>
       <!-- 投稿フォーム(POSTから送信されたら-->
       <form action="/" method="POST" class="post-form">
         <textarea
@@ -32,6 +44,16 @@
           {% for row in rows %}
           <li class="message-card">
             <span>{{ row[1] }}</span>
+            <!-- いいねボタン-->
+            <form
+              action="/like/{{ row[0] }}"
+              method="POST"
+              style="display: inline"
+            >
+              <button type="submit" class="like-btn" style="margin-left: 10px">
+                ❤️ いいね ({{ row[2] }})
+              </button>
+            </form>
             <!-- 編集ボタン-->
             <a
               href="/edit/{{ row[0] }}"
@@ -57,5 +79,7 @@
         {% endif %}
       </div>
     </div>
+    <!-- jsファイル読み込み-->
+    <script src="{{ url_for('static', filename='script.js')}}"></script>
   </body>
 </html>

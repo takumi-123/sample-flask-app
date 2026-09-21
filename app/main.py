@@ -21,6 +21,8 @@ def get_db_connection():
 def init_db():
     conn = get_db_connection()
     cur = conn.cursor()
+    
+    # メッセージテーブル
     cur.execute("""
           CREATE TABLE IF NOT EXISTS messages (
               id SERIAL PRIMARY KEY,
@@ -36,6 +38,14 @@ def init_db():
           password TEXT NOT NULL
           );
           """)
+
+    # いいねテーブル作成
+    cur.execute("""
+         CREATE TABLE IF NOT EXISTS likes (
+            id SERIAL PRIMARY KEY,
+            message_id INTEGER REFERENCES messages(id) ON DELETE CASCADE
+         );
+         """)
     
     conn.commit()
     cur.close()
@@ -46,20 +56,43 @@ def index():
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # postから送信されたら
+    # POST（新規投稿）されたとき
     if request.method == "POST":
         message = request.form.get("message")
         if message:
-            # SQLでデータを保存する
             cur.execute("INSERT INTO messages (content) VALUES (%s);", (message,))
             conn.commit()
         return redirect("/")
-    # GETならデータ一覧
-    cur.execute("SELECT id, content FROM messages ORDER BY id DESC;")
+        
+    # 検索キーワードを受け取る
+    keyword = request.args.get("keyword")
+
+    # 👇 基本のSQL（いいねの数も一緒に取ってくるパーツ）
+    base_query = """
+        SELECT messages.id, messages.content, COUNT(likes.id) AS like_count
+        FROM messages
+        LEFT JOIN likes ON messages.id = likes.message_id
+    """
+
+    if keyword:
+        #  キーワードがある場合：基本のSQLに「WHERE（絞り込み）」をくっつける！
+        cur.execute(base_query + """
+            WHERE messages.content LIKE %s
+            GROUP BY messages.id
+            ORDER BY messages.id DESC;
+        """, (f"%{keyword}%",))
+    else:
+        #  キーワードがない場合：そのままグループ化して並べる！
+        cur.execute(base_query + """
+            GROUP BY messages.id
+            ORDER BY messages.id DESC;
+        """)
+
     rows = cur.fetchall()
+    cur.close()
+    conn.close()
 
     return render_template("index.html", rows=rows)
-
 # 新規ユーザー登録フォーム
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -155,6 +188,22 @@ def edit_message(id):
     conn.close()
 
     return render_template("edit.html", message=message)
+
+# いいねが押されたときの√
+@app.route("/like/<int:message_id>", methods=["POST"])
+def like_messages(message_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # likeテーブルにどのメッセージをいいねするか
+    cur.execute("INSERT INTO likes (message_id) VALUES (%s);", (message_id,))
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    #トップページに戻る
+    return redirect("/")
 if __name__ == "__main__":
     init_db()
     app.run(host="0.0.0.0", port=5000)
