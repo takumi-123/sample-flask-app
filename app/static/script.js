@@ -38,4 +38,23 @@ document.addEventListener("DOMContentLoaded", function () {
       document.body.classList.toggle("dark-mode");
     });
   }
+  // 文字数を記録する
+  const messageInput = document.querySelector("#message-input");
+  const charCount = document.querySelector("#char-count");
+
+  // ２つあったら、ユーザーが文字を打つ瞬間
+  if (messageInput && charCount) {
+    messageInput.addEventListener("input", function () {
+      // テキストエリア(messageInput)に入力された中身(value)を取り出して文字の長さ(length)をかく
+      const currentLength = messageInput.value.length;
+      // charCountを上の変数に書き換える
+      charCount.textContent = currentLength;
+
+      if (currentLength > 140) {
+        charCount.style.color = "red";
+      } else {
+        charCount.style.color = "black";
+      }
+    });
+  }
 });

@@ -15,7 +15,7 @@
       <button id="dark-mode-btn">🌙 ダークモード切替</button>
       <h1>💬 掲示板アプリ</h1>
 
-      <!-- 検索フォーム-->
+      <!-- 検索フォーム -->
       <form action="/" method="GET" class="search-form">
         <input
           type="text"
@@ -26,13 +26,22 @@
         <button type="submit" class="search-btn">検索</button>
         <a href="/" class="reset-btn">リセット</a>
       </form>
-      <!-- 投稿フォーム(POSTから送信されたら-->
+
+      <!-- 投稿フォーム（文字数カウンター付き） -->
       <form action="/" method="POST" class="post-form">
         <textarea
           name="message"
+          id="message-input"
           placeholder="いまどうしてる？メッセージを入力..."
+          rows="3"
+          class="post-input"
           required
         ></textarea>
+
+        <div class="counter-container">
+          <span id="char-count">0</span> / 140文字
+        </div>
+
         <button type="submit">投稿する</button>
       </form>
 
@@ -61,7 +70,7 @@
               style="margin-right: 5px"
               >編集</a
             >
-            <!-- 削除ボタン（row[0] の id を使って削除ルートに飛ばす） -->
+            <!-- 削除ボタン -->
             <form
               action="/delete/{{ row[0] }}"
               method="POST"

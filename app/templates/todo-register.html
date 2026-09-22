@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todoアプリー新規登録</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename=todo.css)}}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Todoアプリ ログイン</h1>
+
+      <form action="/todo/login" method="post" class="autp-form">
+        <div class="form-group">
+          <label for="username">ユーザー名</label>
+          <input type="text" name="usename" placeholder="ユーザー名" required />
+        </div>
+      </form>
+      "
+    </div>
+  </body>
+</html>

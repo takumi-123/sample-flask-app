@@ -46,6 +46,15 @@ def init_db():
             message_id INTEGER REFERENCES messages(id) ON DELETE CASCADE
          );
          """)
+
+    # Todo用のusersテーブル
+    cur.execute("""
+         CREATE TABLE IF NOT EXISTS Todousers (
+           id SERIAL PRIMARY KEY,
+           username VARCHAR(50) UNIQUE NOT NULL,
+           password VARCHAR(255) NOT NULL
+        );
+        """)
     
     conn.commit()
     cur.close()
@@ -93,7 +102,7 @@ def index():
     conn.close()
 
     return render_template("index.html", rows=rows)
-# 新規ユーザー登録フォーム
+# 新規ユーザー登録フォーム(usersテーブル)
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -204,6 +213,59 @@ def like_messages(message_id):
 
     #トップページに戻る
     return redirect("/")
+
+# 新規登録　Todouser用
+@app.route("/todo/register", methods=["GET", "POST"])
+def todo_register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if username and password:
+           hashed_password = generate_password_hash(password)
+
+           conn = get_db_connection()
+           cur = conn.cursor()
+           try:
+               # Todoテーブルに追加
+               cur.execute("INSERT INTO Todousers (username, password) VALUES (%s, %s);",
+                           (username, hashed_password)
+               )
+               conn.commit()
+           except psycopg2.errors.UniqueViolation:
+               conn.rollback()
+               return "このユーザーは既に使われています。"
+           finally:
+               cur.close()
+               conn.close()
+
+           return redirect("/todo/login")
+
+    return render_template("todo-register.html")
+
+# ログイン(Todousers)
+@app.route("/todo/login", methods=["POST", "GET"])
+def todo_login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+
+        # テーブルからユーザ情報を検索
+        cur.execute("SELECT id, username, password FROM Todousers WHERE username = %s;", (username,))
+        user = cur.fetchone() #1件取得
+        cur.close()
+        conn.close()
+
+        if user and check_password_hash(user[2], password):
+            return redirect("/todo/list")
+        else:
+            return "ユーザー名またはパスワードが間違っています。"
+
+    return render_template("todo-login.html")
+
 if __name__ == "__main__":
     init_db()
     app.run(host="0.0.0.0", port=5000)
