@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todoアプリ - リスト一覧</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='todo.css')}}" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="user-heder"></header>
+        <h2>こんにちは、{{ username }} さん</h2>
+        <a href="/todo/logout" class="logout-btn">ログアウト</a>
+    </header>
+
+      <h1>マイTodoリスト</h1>
+
+      <!-- Todo追加フォーム-->
+      <form action="/todo/add" method="POST" class="todo-form">
+        <input
+          type="text"
+          name="task"
+          placeholder="新しいTodoを入力してください"
+          required
+        />
+        <button type="submit" class="submit-btn">追加</button>
+      </form>
+
+      <!-- Todoリスト一覧表示-->
+      <ul class="todo-list">
+        {% for todo in todos %}
+        <li class="todo-item">
+          <span>{{ todo[1] }}</span>
+          <a href="/todo/delete/{{ todo[0] }}" class="delete-btn">完了・削除</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </body>
+</html>

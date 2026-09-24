@@ -1,11 +1,11 @@
 # セキュリティ関連のimport
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import Flask, redirect,render_template,request
+from flask import Flask, redirect,render_template, request, session
 import os
 import psycopg2
 
 app = Flask(__name__)
-
+app.secret_key = "your_secret_key_here"
 # データベースに接続
 def get_db_connection():
     conn = psycopg2.connect(
@@ -54,6 +54,15 @@ def init_db():
            username VARCHAR(50) UNIQUE NOT NULL,
            password VARCHAR(255) NOT NULL
         );
+        """)
+
+    # Todoの保存テーブル
+    cur.execute("""
+         CREATE TABLE IF NOT EXISTS todos (
+         id SERIAL PRIMARY KEY,
+         username VARCHAR(50) NOT NULL,
+         task TEXT NOT NULL
+         );
         """)
     
     conn.commit()
@@ -260,11 +269,78 @@ def todo_login():
         conn.close()
 
         if user and check_password_hash(user[2], password):
+            # セッションにほぞん
+            session["username"] = user[1]
             return redirect("/todo/list")
         else:
             return "ユーザー名またはパスワードが間違っています。"
 
     return render_template("todo-login.html")
+
+# todoリスト一覧画面
+@app.route("/todo/list")
+def todo_list():
+    # ログインしてなかったらログイン画面にかえす
+    if "username" not in session:
+        return redirect("/todo/login")
+    # ログイン中のユーザー名をHTMLに渡す
+    current_user = session["username"]
+
+    # データベースから全件取得
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id, task FROM todos WHERE username = %s;", (current_user,))
+    user_todos = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return render_template("todo-list.html", username=current_user, todos=user_todos)
+
+# ログアウト
+@app.route("/todo/logout")
+def todo_logout():
+    # セッションからユーザー名を削除
+    session.pop("username", None)
+    return redirect("/todo/login")
+
+# Todo追加
+@app.route("/todo/add", methods=["POST"])
+def todo_add():
+    # ログインしてなかったらログイン画面へ
+    if "username" not in session:
+        return redirect("/todo/login")
+
+    # フォームからタスク内容を取得
+    task = request.form.get("task")
+    current_user = session["username"]
+
+    if task:
+        conn = get_db_connection()
+        cur = conn.cursor()
+        # データベースほぞん
+        cur.execute("INSERT INTO todos (username, task) VALUES (%s, %s);", (current_user, task))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+    # 追加が終わったら
+    return redirect("/todo/list")
+
+# Todo削除
+@app.route("/todo/delete/<int:todo_id>")
+def todo_delete(todo_id):
+    if "username" not in session:
+        return redirect("/todo/login")
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    #DB
+    cur.execute("DELETE FROM todos WHERE id = %s;", (todo_id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect("/todo/list")
 
 if __name__ == "__main__":
     init_db()

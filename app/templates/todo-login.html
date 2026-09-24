@@ -2,13 +2,13 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <title>Todoアプリ - 新規登録</title>
+    <title>Todoアプリ - ログイン</title>
   </head>
   <body>
     <div class="container">
-      <h2>Todoアプリ 新規登録</h2>
+      <h2>Todoアプリ ログイン</h2>
 
-      <form action="/todo/register" method="POST">
+      <form action="/todo/login" method="POST">
         <div class="form-group">
           <label>ユーザー名：</label>
           <input
@@ -24,12 +24,12 @@
           <input type="password" name="password" required />
         </div>
 
-        <button type="submit">登録する</button>
+        <button type="submit">ログイン</button>
       </form>
 
       <p>
-        すでにアカウントをお持ちの方はこちら：<a href="/todo/login"
-          >ログインはこちら</a
+        アカウントをお持ちでない方はこちら：<a href="/todo/register"
+          >新規登録はこちら</a
         >
       </p>
     </div>
